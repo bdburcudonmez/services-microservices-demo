@@ -53,6 +53,9 @@ Image tagging follows the event that triggered the run:
 - Push to `main` → `dev-latest`
 - Push of a `v*` tag → the tag itself (release candidate)
 
+You can see an example of a successful GitHub Actions run below:
+<img width="1347" height="743" alt="GithubActions_workflow" src="https://github.com/user-attachments/assets/76c8ca12-a6c3-4171-aeae-12dc0e36c42f" />
+
 ### Caching
 
 Two layers of caching were added to keep the pipeline fast on repeated runs:
@@ -79,6 +82,9 @@ Trivy scans each image for CRITICAL/HIGH vulnerabilities before it is
 allowed to be pushed. Results are also uploaded as a SARIF report to
 GitHub's **Security tab**, so findings are visible outside the workflow
 logs.
+
+Vulnerabilities found by Trivy are visible in the repo's Security tab:
+<img width="1328" height="708" alt="SecurityTab_Trivy_scan" src="https://github.com/user-attachments/assets/65438eee-5d6f-46fd-bbb2-989d9420f755" />
 
 While setting this up, the scan surfaced two real issues in the existing
 codebase that were fixed as part of this work:
