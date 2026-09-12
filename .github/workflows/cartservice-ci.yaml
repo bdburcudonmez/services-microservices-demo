@@ -11,6 +11,10 @@ on:
       - 'src/cartservice/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+  
 jobs:
   test:
     runs-on: ubuntu-latest
