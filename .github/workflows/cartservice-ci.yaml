@@ -1,0 +1,40 @@
+name: cartservice-ci
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - 'src/cartservice/**'
+  pull_request:
+    paths:
+      - 'src/cartservice/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Restore
+        run: dotnet restore src/cartservice/src/cartservice.csproj
+
+      - name: Run tests
+        run: dotnet test src/cartservice/tests --logger trx
+
+  build-scan-push:
+    needs: test
+    uses: ./.github/workflows/reusable-build-scan-push.yml
+    with:
+      service_name: cartservice
+      dockerfile_context: src/cartservice/src
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
