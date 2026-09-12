@@ -54,7 +54,13 @@ Image tagging follows the event that triggered the run:
 - Push of a `v*` tag → the tag itself (release candidate)
 
 You can see an example of a successful GitHub Actions run below:
+
 <img width="1347" height="743" alt="GithubActions_workflow" src="https://github.com/user-attachments/assets/76c8ca12-a6c3-4171-aeae-12dc0e36c42f" />
+
+Example of a pushed image on Docker Hub:
+
+<img width="1091" height="534" alt="cartservice_image_in_dockerHub" src="https://github.com/user-attachments/assets/89634d59-2ee2-4670-8187-9454f4788722" />
+
 
 ### Caching
 
@@ -84,6 +90,7 @@ GitHub's **Security tab**, so findings are visible outside the workflow
 logs.
 
 Vulnerabilities found by Trivy are visible in the repo's Security tab:
+
 <img width="1328" height="708" alt="SecurityTab_Trivy_scan" src="https://github.com/user-attachments/assets/65438eee-5d6f-46fd-bbb2-989d9420f755" />
 
 While setting this up, the scan surfaced two real issues in the existing
