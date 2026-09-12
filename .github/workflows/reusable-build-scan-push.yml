@@ -48,6 +48,8 @@ jobs:
           context: ${{ inputs.dockerfile_context }}
           load: true
           tags: ${{ inputs.service_name }}:${{ steps.set-tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       
       # Trivy runs 3 times: 
       # (1) human-readable table for logs
