@@ -1,0 +1,60 @@
+#!/usr/bin/env groovy
+@Library('jenkins-shared-library') _
+
+pipeline {
+    agent any
+    environment {
+        SERVICE_NAME = 'productcatalogservice'
+        ECR_REGISTRY = "${env.ECR_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
+    }
+    stages {
+        stage('Check Changes') {
+            steps {
+                script {
+                    if (env.TAG_NAME) {
+                        env.SERVICE_CHANGED = 'true'
+                    } else {
+                        def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                        env.SERVICE_CHANGED = changes.contains("src/${SERVICE_NAME}/") ? 'true' : 'false'
+                    }
+                }
+            }
+        }
+        stage('Build Image') {
+            when { environment name: 'SERVICE_CHANGED', value: 'true' }
+            steps {
+                script {
+                    env.IMAGE_TAG = determineImageTag()
+                    env.TARGET_ENV = determineEnvironment()
+                    env.IMAGE_NAME = "${ECR_REGISTRY}/online-boutique/${SERVICE_NAME}:${IMAGE_TAG}"
+                    buildImage(SERVICE_NAME, IMAGE_NAME)
+                }
+            }
+        }
+        stage('Scan Image') {
+            when { environment name: 'SERVICE_CHANGED', value: 'true' }
+            steps {
+                script {
+                    trivyScan(IMAGE_NAME)
+                }
+            }
+        }
+        stage('Push to ECR') {
+            when { environment name: 'SERVICE_CHANGED', value: 'true' }
+            steps {
+                script {
+                    ecrLogin(ECR_REGISTRY)
+                    dockerPush(IMAGE_NAME)
+                }
+            }
+        }
+        stage('Commit Version Update') {
+            when { environment name: 'SERVICE_CHANGED', value: 'true' }
+            steps {
+                script {
+                    commitVersionUpdate(SERVICE_NAME, IMAGE_TAG, TARGET_ENV)
+                }
+            }
+        }
+    }
+}
