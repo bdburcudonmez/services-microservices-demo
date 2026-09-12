@@ -23,8 +23,7 @@ RUN dotnet publish cartservice.csproj -p:PublishSingleFile=true -r linux-musl-x6
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0.10-alpine3.18-amd64@sha256:0a0082af70195406fab26bcdbc9313e27a5869082bcf7d16d84e1b2c0eb1b624
 
-#RUN apk update && apk upgrade --no-cache
-
+RUN apk update && apk upgrade --no-cache
 WORKDIR /app
 COPY --from=builder /cartservice .
 EXPOSE 7070
